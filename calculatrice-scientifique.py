@@ -47,6 +47,13 @@ Fonctions de calcul (inchangees) :
     log, ln, racine, x2, x^y, 1/x, |x|, factorielle, pi, e,
     DEG/RAD, memoire MC MR M+ M- MS, historique cliquable, clavier complet.
 
+LANGUES : anglais (par defaut), francais et espagnol.
+    Choix dans la fenetre "Customize / Personnaliser / Personalizar"
+    (section Language / Langue / Idioma, en haut). Tous les textes
+    sont traduits : boutons, titres, historique, themes, erreurs,
+    fenetre de personnalisation. La langue choisie est sauvegardee
+    dans calculatrice_config.json et retrouvee au demarrage.
+
 Bouton = repete : appuyer plusieurs fois sur = repete la derniere
     operation (+, -, x, /). Exemple : 9+9 = 18, = donne 27, = donne 36.
 """
@@ -107,16 +114,141 @@ THEMES = {
         "accent": "#ffffff", "equals": "#ffffff", "equals_hover": "#e5e5e5",
         "equals_text": "#000000", "text": "#ffffff", "subtext": "#888888"},
 }
-THEME_LABELS = {"sombre": "Sombre", "clair": "Clair", "bleu": "Bleu nuit",
-    "vert": "Vert foret", "violet": "Violet", "orange": "Orange",
-    "rose": "Rose", "noir": "Noir pur (OLED)"}
+# --- Langues / Languages / Idiomas ---
+LANGUAGES = {"en": "English", "fr": "Français", "es": "Español"}
+DEFAULT_LANGUAGE = "en"
+THEME_LABELS = {
+    "en": {"sombre": "Dark", "clair": "Light", "bleu": "Midnight blue",
+        "vert": "Forest green", "violet": "Purple", "orange": "Orange",
+        "rose": "Pink", "noir": "Pure black (OLED)"},
+    "fr": {"sombre": "Sombre", "clair": "Clair", "bleu": "Bleu nuit",
+        "vert": "Vert forêt", "violet": "Violet", "orange": "Orange",
+        "rose": "Rose", "noir": "Noir pur (OLED)"},
+    "es": {"sombre": "Oscuro", "clair": "Claro", "bleu": "Azul noche",
+        "vert": "Verde bosque", "violet": "Violeta", "orange": "Naranja",
+        "rose": "Rosa", "noir": "Negro puro (OLED)"},
+}
+STRINGS = {
+    "en": {
+        "title_sci": "Scientific Calculator", "title_basic": "Calculator",
+        "customize": "Customize", "theme_prefix": "Theme: ",
+        "mode_sci": "Mode: Scientific  \u25b8  Normal",
+        "mode_normal": "Mode: Normal  \u25b8  Scientific",
+        "history": "History", "clear_history": "Clear history",
+        "error": "Error", "complex_result": "Complex result",
+        "language": "Language", "ready_theme": "Ready-made theme:",
+        "free_colors": "Custom colours (override the theme):",
+        "choose": "Choose...", "clear_custom": "Clear custom colours",
+        "font_sizes_style": "Font, sizes and style:",
+        "display_size": "Size of the large displayed number",
+        "button_size": "Button text size", "spacing": "Spacing between buttons",
+        "button_style": "Button style:", "flat": "Flat (modern)",
+        "relief": "Slight relief", "border": "Border",
+        "more_settings": "More settings (window, display...) ->",
+        "close": "Close", "customize_title": "Customize the calculator",
+        "customize_title2": "Customize - more settings",
+        "window": "Window:", "small": "Small", "medium": "Medium",
+        "large": "Large", "xlarge": "Extra large",
+        "always_on_top": "Always on top", "opacity": "Window transparency:",
+        "display_calc": "Display and calculation:",
+        "show_history": "Show history on the right",
+        "keep_history": "Keep history between sessions",
+        "thousands_sep": "Thousands separator (e.g. 1,234.5)",
+        "max_decimals": "Max. number of decimals displayed:",
+        "decimal_sep": "Decimal separator:", "comma": "Comma  (1,5)",
+        "dot": "Dot  (1.5)", "start_deg": "Start in DEG (otherwise RAD)",
+        "reset_all": "RESET EVERYTHING (back to defaults)",
+        "save_close": "Save and close", "reset_title": "Reset",
+        "reset_msg": "Reset everything to the defaults?",
+        "color_bg": "Window background", "color_panel": "History panel",
+        "color_btn": "Number buttons", "color_op": "Function / operator buttons",
+        "color_equals": "= button (accent)", "color_text": "Main text",
+        "color_subtext": "Secondary text",
+    },
+    "fr": {
+        "title_sci": "Calculatrice scientifique", "title_basic": "Calculatrice",
+        "customize": "Personnaliser", "theme_prefix": "Thème : ",
+        "mode_sci": "Mode : Scientifique  \u25b8  Normal",
+        "mode_normal": "Mode : Normal  \u25b8  Scientifique",
+        "history": "Historique", "clear_history": "Effacer l'historique",
+        "error": "Erreur", "complex_result": "Résultat complexe",
+        "language": "Langue", "ready_theme": "Thème prêt à l'emploi :",
+        "free_colors": "Couleurs libres (remplacent le thème) :",
+        "choose": "Choisir...", "clear_custom": "Effacer les couleurs libres",
+        "font_sizes_style": "Police, tailles et style :",
+        "display_size": "Taille du gros chiffre affiché",
+        "button_size": "Taille du texte des boutons", "spacing": "Espacement entre les boutons",
+        "button_style": "Style des boutons :", "flat": "Plat (moderne)",
+        "relief": "Relief léger", "border": "Bordure",
+        "more_settings": "Plus de réglages (fenêtre, affichage...) ->",
+        "close": "Fermer", "customize_title": "Personnaliser la calculatrice",
+        "customize_title2": "Personnaliser - suite",
+        "window": "Fenêtre :", "small": "Petite", "medium": "Moyenne",
+        "large": "Grande", "xlarge": "Très grande",
+        "always_on_top": "Toujours au premier plan", "opacity": "Transparence de la fenêtre :",
+        "display_calc": "Affichage et calcul :",
+        "show_history": "Montrer l'historique à droite",
+        "keep_history": "Garder l'historique entre les sessions",
+        "thousands_sep": "Séparateur de milliers (ex. 1 234,5)",
+        "max_decimals": "Nombre max. de décimales affichées :",
+        "decimal_sep": "Séparateur décimal :", "comma": "Virgule  (1,5)",
+        "dot": "Point  (1.5)", "start_deg": "Démarrer en DEG (sinon RAD)",
+        "reset_all": "RÉINITIALISER TOUT (comme au début)",
+        "save_close": "Enregistrer et fermer", "reset_title": "Réinitialiser",
+        "reset_msg": "Tout remettre comme au début ?",
+        "color_bg": "Fond de la fenêtre", "color_panel": "Panneau historique",
+        "color_btn": "Boutons chiffres", "color_op": "Boutons fonctions / opérateurs",
+        "color_equals": "Bouton = (accent)", "color_text": "Texte principal",
+        "color_subtext": "Texte secondaire",
+    },
+    "es": {
+        "title_sci": "Calculadora científica", "title_basic": "Calculadora",
+        "customize": "Personalizar", "theme_prefix": "Tema: ",
+        "mode_sci": "Modo: Científico  \u25b8  Normal",
+        "mode_normal": "Modo: Normal  \u25b8  Científico",
+        "history": "Historial", "clear_history": "Borrar el historial",
+        "error": "Error", "complex_result": "Resultado complejo",
+        "language": "Idioma", "ready_theme": "Tema listo para usar:",
+        "free_colors": "Colores personalizados (reemplazan el tema):",
+        "choose": "Elegir...", "clear_custom": "Borrar colores personalizados",
+        "font_sizes_style": "Fuente, tamaños y estilo:",
+        "display_size": "Tamaño del número grande mostrado",
+        "button_size": "Tamaño del texto de los botones", "spacing": "Espacio entre botones",
+        "button_style": "Estilo de los botones:", "flat": "Plano (moderno)",
+        "relief": "Relieve ligero", "border": "Borde",
+        "more_settings": "Más ajustes (ventana, pantalla...) ->",
+        "close": "Cerrar", "customize_title": "Personalizar la calculadora",
+        "customize_title2": "Personalizar - más ajustes",
+        "window": "Ventana:", "small": "Pequeña", "medium": "Mediana",
+        "large": "Grande", "xlarge": "Muy grande",
+        "always_on_top": "Siempre visible", "opacity": "Transparencia de la ventana:",
+        "display_calc": "Pantalla y cálculo:",
+        "show_history": "Mostrar el historial a la derecha",
+        "keep_history": "Guardar el historial entre sesiones",
+        "thousands_sep": "Separador de miles (ej. 1.234,5)",
+        "max_decimals": "N.º máx. de decimales mostrados:",
+        "decimal_sep": "Separador decimal:", "comma": "Coma  (1,5)",
+        "dot": "Punto  (1.5)", "start_deg": "Iniciar en DEG (si no, RAD)",
+        "reset_all": "RESTABLECER TODO (como al principio)",
+        "save_close": "Guardar y cerrar", "reset_title": "Restablecer",
+        "reset_msg": "¿Restablecer todo como al principio?",
+        "color_bg": "Fondo de la ventana", "color_panel": "Panel de historial",
+        "color_btn": "Botones de números", "color_op": "Botones de funciones / operadores",
+        "color_equals": "Botón = (acento)", "color_text": "Texto principal",
+        "color_subtext": "Texto secundario",
+    },
+}
+def _lang(settings=None):
+    lang = (settings or {}).get("language", DEFAULT_LANGUAGE)
+    return lang if lang in STRINGS else DEFAULT_LANGUAGE
+def _tr(settings, key):
+    return STRINGS[_lang(settings)][key]
+
 WINDOW_SIZES = {"petite": "640x480", "moyenne": "760x560",
     "grande": "900x650", "tres_grande": "1050x750",
     "normale_petite": "420x520", "normale_moyenne": "480x600"}
-COLOR_LABELS = {"bg": "Fond de la fenetre", "panel": "Panneau historique",
-    "btn": "Boutons chiffres", "op": "Boutons fonctions / operateurs",
-    "equals": "Bouton = (accent)", "text": "Texte principal",
-    "subtext": "Texte secondaire"}
+COLOR_KEYS = ["bg", "panel", "btn", "op", "equals", "text", "subtext"]
+COLOR_LABELS = {k: k for k in COLOR_KEYS}  # compat; real labels via STRINGS
 
 DEFAULT_SETTINGS = {
     "theme_name": "sombre", "custom_colors": {},
@@ -125,7 +257,7 @@ DEFAULT_SETTINGS = {
     "always_on_top": False, "opacity": 1.0, "show_history": True,
     "decimals": 10, "decimal_sep": ",", "thousands_sep": False,
     "default_degrees": True, "keep_history": False,
-    "mode": "scientifique", "saved_history": [],
+    "mode": "scientifique", "saved_history": [], "language": "en",
 }
 
 
@@ -154,7 +286,6 @@ class Calculatrice(tk.Tk):
     def __init__(self):
         super().__init__()
         self.settings = load_settings()
-        self.title("Calculatrice scientifique")
         self.minsize(380, 440)
         self.expression = ""
         self.just_evaluated = False
@@ -186,6 +317,17 @@ class Calculatrice(tk.Tk):
         c["equals_text"] = c.get("equals_text", "#ffffff")
         return c
 
+    # --- i18n helpers ---
+    def _t(self, key):
+        return _tr(self.settings, key)
+    def _theme_label(self, name=None):
+        return THEME_LABELS[_lang(self.settings)].get(name or self.settings["theme_name"], "Dark")
+    def _color_label(self, key):
+        return self._t("color_" + key)
+    def _set_language(self, lang):
+        if lang in STRINGS:
+            self.settings["language"] = lang
+            self._apply_all()
     def _on_close(self):
         if self.settings.get("keep_history"):
             self.settings["saved_history"] = self.hist_items[-100:]
@@ -205,7 +347,7 @@ class Calculatrice(tk.Tk):
         self.mode_btn = tk.Button(bar, bd=0, cursor="hand2",
             font=("Segoe UI", 10, "bold"), command=self._toggle_mode)
         self.mode_btn.pack(side="left")
-        self.settings_btn = tk.Button(bar, text="Personnaliser",
+        self.settings_btn = tk.Button(bar, text=self._t("customize"),
             bd=0, cursor="hand2", font=("Segoe UI", 10),
             command=self._open_settings)
         self.settings_btn.pack(side="right")
@@ -227,14 +369,15 @@ class Calculatrice(tk.Tk):
         hist.pack(side="right", fill="y", padx=(10, 0))
         hist.pack_propagate(False)
         self.hist_frame = hist
-        tk.Label(hist, text="Historique", anchor="w",
-                 font=("Segoe UI Semibold", 11)).pack(fill="x")
+        self.hist_label = tk.Label(hist, text=self._t("history"), anchor="w",
+                 font=("Segoe UI Semibold", 11))
+        self.hist_label.pack(fill="x")
         self.history = tk.Listbox(hist, bd=0, highlightthickness=0,
             activestyle="none", font=("Segoe UI", 10), exportselection=False)
         self.history.pack(fill="both", expand=True, pady=6)
         self.history.bind("<<ListboxSelect>>", self._history_click)
         self.hist_items = []
-        self.clear_hist_btn = tk.Button(hist, text="Effacer l'historique",
+        self.clear_hist_btn = tk.Button(hist, text=self._t("clear_history"),
             bd=0, cursor="hand2", font=("Segoe UI", 9),
             command=self._clear_history)
         self.clear_hist_btn.pack(fill="x")
@@ -349,13 +492,13 @@ class Calculatrice(tk.Tk):
         if self.mode == "scientifique":
             self.pad_basic.pack_forget()
             self.pad_sci.pack(side="left", fill="both", expand=True)
-            self.title("Calculatrice scientifique")
-            self.mode_btn.configure(text="Mode : Scientifique  ▸  Normal")
+            self.title(self._t("title_sci"))
+            self.mode_btn.configure(text=self._t("mode_sci"))
         else:
             self.pad_sci.pack_forget()
             self.pad_basic.pack(side="left", fill="both", expand=True)
-            self.title("Calculatrice")
-            self.mode_btn.configure(text="Mode : Normal  ▸  Scientifique")
+            self.title(self._t("title_basic"))
+            self.mode_btn.configure(text=self._t("mode_normal"))
         # Fenetre plus etroite en mode normal
         size = self.settings.get("window_size", "moyenne")
         if self.mode == "normal":
@@ -397,7 +540,13 @@ class Calculatrice(tk.Tk):
                           activebackground=t["op_hover"], font=(fam, 10))
         self.mode_btn.configure(font=(fam, 10, "bold"))
         self.theme_btn.configure(
-            text="Theme : " + THEME_LABELS.get(s["theme_name"], "Sombre"))
+            text=self._t("theme_prefix") + self._theme_label())
+        self.settings_btn.configure(text=self._t("customize"))
+        try:
+            self.hist_label.configure(text=self._t("history"))
+            self.clear_hist_btn.configure(text=self._t("clear_history"))
+        except Exception:
+            pass
         if s.get("show_history", True):
             if not self.hist_frame.winfo_ismapped():
                 self.hist_frame.pack(side="right", fill="y", padx=(10, 0))
@@ -443,200 +592,151 @@ class Calculatrice(tk.Tk):
     def _open_settings(self):
         s = self.settings
         win = tk.Toplevel(self)
-        win.title("Personnaliser la calculatrice")
-        win.geometry("520x560")
+        win.title(self._t("customize_title"))
+        win.geometry("520x620")
         win.transient(self)
         win.grab_set()
         nb = tk.Frame(win)
         nb.pack(fill="both", expand=True, padx=10, pady=10)
-        # --- Bloc Theme + couleurs ---
-        tk.Label(nb, text="Theme pret a l'emploi :",
+        # --- Language / Langue / Idioma (applies immediately, saved) ---
+        tk.Label(nb, text=self._t("language") + " / Language / Idioma :",
                  font=("Segoe UI", 11, "bold")).pack(anchor="w")
+        lang_var = tk.StringVar(value=_lang(s))
+        lf = tk.Frame(nb); lf.pack(fill="x", pady=4)
+        def _change_lang():
+            self._set_language(lang_var.get())
+            # Rebuild this window so every label switches language too
+            win.destroy(); self._open_settings()
+        for code, lab in LANGUAGES.items():
+            tk.Radiobutton(lf, text=lab, variable=lang_var, value=code,
+                           font=("Segoe UI", 10), command=_change_lang).pack(side="left", padx=6)
+        # --- Theme + colours ---
+        tk.Label(nb, text=self._t("ready_theme"),
+                 font=("Segoe UI", 11, "bold")).pack(anchor="w", pady=(10, 0))
         theme_var = tk.StringVar(value=s["theme_name"])
-        # Swatches des couleurs libres, remplis plus bas ; references
-        # gardees pour pouvoir les rafraichir quand le theme change.
         self._color_swatches = {}
         def _on_theme_change():
-            # CORRECTIF : appliquer le theme IMMEDIATEMENT au clic,
-            # sans attendre le bouton Fermer. On efface aussi les
-            # couleurs libres, sinon elles masquent le nouveau theme
-            # (c'etait le bug : Violet coche mais Bleu nuit visible).
             s["theme_name"] = theme_var.get()
             s["custom_colors"] = {}
             self._apply_all()
-            # Rafraichir les pastilles de couleurs libres
             new_cur = self._colors()
             for _k, _sw in getattr(self, "_color_swatches", {}).items():
-                try:
-                    _sw.configure(bg=new_cur.get(_k, "#888888"))
-                except Exception:
-                    pass
-        tf = tk.Frame(nb)
-        tf.pack(fill="x", pady=4)
-        for k, lab in THEME_LABELS.items():
-            tk.Radiobutton(tf, text=lab, variable=theme_var, value=k,
-                           font=("Segoe UI", 10),
-                           command=_on_theme_change).pack(anchor="w")
-        tk.Label(nb, text="Couleurs libres (remplacent le theme) :",
+                try: _sw.configure(bg=new_cur.get(_k, "#888888"))
+                except Exception: pass
+        tf = tk.Frame(nb); tf.pack(fill="x", pady=4)
+        for k in THEMES.keys():
+            tk.Radiobutton(tf, text=self._theme_label(k), variable=theme_var, value=k,
+                           font=("Segoe UI", 10), command=_on_theme_change).pack(anchor="w")
+        tk.Label(nb, text=self._t("free_colors"),
                  font=("Segoe UI", 11, "bold")).pack(anchor="w", pady=(10, 2))
         self._color_vars = {}
-        cf = tk.Frame(nb)
-        cf.pack(fill="x")
+        cf = tk.Frame(nb); cf.pack(fill="x")
         cur = self._colors()
-        for row, (key, lab) in enumerate(COLOR_LABELS.items()):
-            tk.Label(cf, text=lab, font=("Segoe UI", 10)).grid(
-                row=row, column=0, sticky="w", pady=2)
-            sw = tk.Label(cf, text="   ", bg=cur.get(key, "#888888"),
-                          relief="solid", bd=1)
+        for row, key in enumerate(COLOR_KEYS):
+            lab = self._color_label(key)
+            tk.Label(cf, text=lab, font=("Segoe UI", 10)).grid(row=row, column=0, sticky="w", pady=2)
+            sw = tk.Label(cf, text="   ", bg=cur.get(key, "#888888"), relief="solid", bd=1)
             sw.grid(row=row, column=1, padx=8)
             self._color_swatches[key] = sw
             def pick(k=key, swatch=sw):
-                # Couleur de depart = couleur ACTUELLE (pas celle
-                # figee a l'ouverture de la fenetre)
                 fresh = self._colors()
-                c = colorchooser.askcolor(color=fresh.get(k),
-                                          title=COLOR_LABELS[k])
+                c = colorchooser.askcolor(color=fresh.get(k), title=self._color_label(k))
                 if c and c[1]:
                     s.setdefault("custom_colors", {})[k] = c[1]
                     if k == "equals":
                         s["custom_colors"]["accent"] = c[1]
                         s["custom_colors"]["equals_hover"] = c[1]
-                    swatch.configure(bg=c[1])
-                    # CORRECTIF : application immediate et sauvegarde
-                    self._apply_all()
-            tk.Button(cf, text="Choisir...", command=pick).grid(
-                row=row, column=2, pady=2)
+                    swatch.configure(bg=c[1]); self._apply_all()
+            tk.Button(cf, text=self._t("choose"), command=pick).grid(row=row, column=2, pady=2)
         def _clear_custom():
-            s["custom_colors"] = {}
-            self._apply_all()
+            s["custom_colors"] = {}; self._apply_all()
             _new = self._colors()
             for _k, _sw in getattr(self, "_color_swatches", {}).items():
-                try:
-                    _sw.configure(bg=_new.get(_k, "#888888"))
-                except Exception:
-                    pass
-        tk.Button(nb, text="Effacer les couleurs libres",
-                  command=_clear_custom).pack(anchor="w", pady=6)
-        # --- Bloc Police / tailles / style ---
-        tk.Label(nb, text="Police, tailles et style :",
+                try: _sw.configure(bg=_new.get(_k, "#888888"))
+                except Exception: pass
+        tk.Button(nb, text=self._t("clear_custom"), command=_clear_custom).pack(anchor="w", pady=6)
+        tk.Label(nb, text=self._t("font_sizes_style"),
                  font=("Segoe UI", 11, "bold")).pack(anchor="w", pady=(8, 2))
         font_var = tk.StringVar(value=s["font_family"])
-        tk.OptionMenu(nb, font_var, "Segoe UI", "Arial", "Verdana",
-                      "Consolas", "Tahoma",
-                      command=lambda _v: (s.update(
-                          font_family=font_var.get()),
-                          self._apply_all())
-                      ).pack(anchor="w", fill="x")
+        tk.OptionMenu(nb, font_var, "Segoe UI", "Arial", "Verdana", "Consolas", "Tahoma",
+                      command=lambda _v: (s.update(font_family=font_var.get()), self._apply_all())).pack(anchor="w", fill="x")
         def slider(label, key, lo, hi):
             tk.Label(nb, text=label, font=("Segoe UI", 10)).pack(anchor="w")
             v = tk.Scale(nb, from_=lo, to=hi, orient="horizontal",
-                         command=lambda val, k=key: (
-                             s.update({k: int(float(val))}),
-                             self._apply_all()))
-            v.set(s[key])
-            v.pack(fill="x")
-            return v
-        slider("Taille du gros chiffre affiche", "display_size", 20, 48)
-        slider("Taille du texte des boutons", "button_size", 10, 20)
-        slider("Espacement entre les boutons", "spacing", 0, 6)
+                         command=lambda val, k=key: (s.update({k: int(float(val))}), self._apply_all()))
+            v.set(s[key]); v.pack(fill="x"); return v
+        slider(self._t("display_size"), "display_size", 20, 48)
+        slider(self._t("button_size"), "button_size", 10, 20)
+        slider(self._t("spacing"), "spacing", 0, 6)
         style_var = tk.StringVar(value=s["button_style"])
-        tk.Label(nb, text="Style des boutons :", font=("Segoe UI", 10)
-                 ).pack(anchor="w")
-        for val, lab in (("plat", "Plat (moderne)"),
-                         ("relief", "Relief leger"), ("bordure", "Bordure")):
-            tk.Radiobutton(nb, text=lab, variable=style_var, value=val,
-                command=lambda: (s.update(button_style=style_var.get()),
-                                 self._apply_all())).pack(anchor="w")
+        tk.Label(nb, text=self._t("button_style"), font=("Segoe UI", 10)).pack(anchor="w")
+        for val, labkey in (("plat", "flat"), ("relief", "relief"), ("bordure", "border")):
+            tk.Radiobutton(nb, text=self._t(labkey), variable=style_var, value=val,
+                command=lambda: (s.update(button_style=style_var.get()), self._apply_all())).pack(anchor="w")
         win._vars = (theme_var, font_var, style_var)
-        # Bouton page 2
-        tk.Button(win, text="Plus de reglages (fenetre, affichage...) ->",
-                  font=("Segoe UI", 10, "bold"),
-                  command=lambda: self._open_settings2(win, theme_var,
-                                                       font_var)
-                  ).pack(pady=6)
-        tk.Button(win, text="Fermer", command=lambda: (
-            s.update(theme_name=theme_var.get(),
-                     font_family=font_var.get()), self._apply_all(),
-            win.destroy())).pack(pady=2)
+        tk.Button(win, text=self._t("more_settings"), font=("Segoe UI", 10, "bold"),
+                  command=lambda: self._open_settings2(win, theme_var, font_var)).pack(pady=6)
+        tk.Button(win, text=self._t("close"), command=lambda: (
+            s.update(theme_name=theme_var.get(), font_family=font_var.get()), self._apply_all(), win.destroy())).pack(pady=2)
 
     def _open_settings2(self, parent_win, theme_var, font_var):
         s = self.settings
         parent_win.destroy()
         win = tk.Toplevel(self)
-        win.title("Personnaliser - suite")
+        win.title(self._t("customize_title2"))
         win.geometry("520x600")
-        win.transient(self)
-        win.grab_set()
-        nb = tk.Frame(win)
-        nb.pack(fill="both", expand=True, padx=12, pady=10)
-        tk.Label(nb, text="Fenetre :", font=("Segoe UI", 11, "bold")
-                 ).pack(anchor="w")
+        win.transient(self); win.grab_set()
+        nb = tk.Frame(win); nb.pack(fill="both", expand=True, padx=12, pady=10)
+        # Language also available on page 2
+        tk.Label(nb, text=self._t("language") + " / Language / Idioma :",
+                 font=("Segoe UI", 11, "bold")).pack(anchor="w")
+        lang_var = tk.StringVar(value=_lang(s))
+        lf = tk.Frame(nb); lf.pack(fill="x", pady=4)
+        def _change_lang2():
+            self._set_language(lang_var.get()); win.destroy(); self._open_settings()
+        for code, lab in LANGUAGES.items():
+            tk.Radiobutton(lf, text=lab, variable=lang_var, value=code,
+                           font=("Segoe UI", 10), command=_change_lang2).pack(side="left", padx=6)
+        tk.Label(nb, text=self._t("window"), font=("Segoe UI", 11, "bold")).pack(anchor="w", pady=(8, 0))
         size_var = tk.StringVar(value=s["window_size"])
-        for val, lab in (("petite", "Petite"), ("moyenne", "Moyenne"),
-                         ("grande", "Grande"), ("tres_grande", "Tres grande")):
-            tk.Radiobutton(nb, text=lab, variable=size_var, value=val,
-                command=lambda: (s.update(window_size=size_var.get()),
-                                 self._apply_all())).pack(anchor="w")
+        for val, labkey in (("petite", "small"), ("moyenne", "medium"), ("grande", "large"), ("tres_grande", "xlarge")):
+            tk.Radiobutton(nb, text=self._t(labkey), variable=size_var, value=val,
+                command=lambda: (s.update(window_size=size_var.get()), self._apply_all())).pack(anchor="w")
         top_var = tk.BooleanVar(value=bool(s["always_on_top"]))
-        tk.Checkbutton(nb, text="Toujours au premier plan",
-            variable=top_var, font=("Segoe UI", 10),
-            command=lambda: (s.update(always_on_top=top_var.get()),
-                             self._apply_all())).pack(anchor="w", pady=2)
-        tk.Label(nb, text="Transparence de la fenetre :",
-                 font=("Segoe UI", 10)).pack(anchor="w")
-        op = tk.Scale(nb, from_=0.5, to=1.0, resolution=0.05,
-                      orient="horizontal",
-                      command=lambda v: (s.update(opacity=float(v)),
-                                         self._apply_all()))
-        op.set(s["opacity"])
-        op.pack(fill="x")
-        tk.Label(nb, text="Affichage et calcul :",
-                 font=("Segoe UI", 11, "bold")).pack(anchor="w", pady=(10, 2))
+        tk.Checkbutton(nb, text=self._t("always_on_top"), variable=top_var, font=("Segoe UI", 10),
+            command=lambda: (s.update(always_on_top=top_var.get()), self._apply_all())).pack(anchor="w", pady=2)
+        tk.Label(nb, text=self._t("opacity"), font=("Segoe UI", 10)).pack(anchor="w")
+        op = tk.Scale(nb, from_=0.5, to=1.0, resolution=0.05, orient="horizontal",
+                      command=lambda v: (s.update(opacity=float(v)), self._apply_all()))
+        op.set(s["opacity"]); op.pack(fill="x")
+        tk.Label(nb, text=self._t("display_calc"), font=("Segoe UI", 11, "bold")).pack(anchor="w", pady=(10, 2))
         hist_var = tk.BooleanVar(value=bool(s["show_history"]))
-        tk.Checkbutton(nb, text="Montrer l'historique a droite",
-            variable=hist_var, font=("Segoe UI", 10),
-            command=lambda: (s.update(show_history=hist_var.get()),
-                             self._apply_all())).pack(anchor="w")
+        tk.Checkbutton(nb, text=self._t("show_history"), variable=hist_var, font=("Segoe UI", 10),
+            command=lambda: (s.update(show_history=hist_var.get()), self._apply_all())).pack(anchor="w")
         keep_var = tk.BooleanVar(value=bool(s["keep_history"]))
-        tk.Checkbutton(nb, text="Garder l'historique entre les sessions",
-            variable=keep_var, font=("Segoe UI", 10),
-            command=lambda: s.update(keep_history=keep_var.get())
-            ).pack(anchor="w")
+        tk.Checkbutton(nb, text=self._t("keep_history"), variable=keep_var, font=("Segoe UI", 10),
+            command=lambda: s.update(keep_history=keep_var.get())).pack(anchor="w")
         thou_var = tk.BooleanVar(value=bool(s["thousands_sep"]))
-        tk.Checkbutton(nb, text="Separateur de milliers (ex. 1 234,5)",
-            variable=thou_var, font=("Segoe UI", 10),
-            command=lambda: (s.update(thousands_sep=thou_var.get()),
-                             self._refresh())).pack(anchor="w")
-        tk.Label(nb, text="Nombre max. de decimales affichees :",
-                 font=("Segoe UI", 10)).pack(anchor="w", pady=(6, 0))
-        dec = tk.Scale(nb, from_=2, to=15, orient="horizontal",
-                       command=lambda v: s.update(decimals=int(float(v))))
-        dec.set(s["decimals"])
-        dec.pack(fill="x")
+        tk.Checkbutton(nb, text=self._t("thousands_sep"), variable=thou_var, font=("Segoe UI", 10),
+            command=lambda: (s.update(thousands_sep=thou_var.get()), self._refresh())).pack(anchor="w")
+        tk.Label(nb, text=self._t("max_decimals"), font=("Segoe UI", 10)).pack(anchor="w", pady=(6, 0))
+        dec = tk.Scale(nb, from_=2, to=15, orient="horizontal", command=lambda v: s.update(decimals=int(float(v))))
+        dec.set(s["decimals"]); dec.pack(fill="x")
         sep_var = tk.StringVar(value=s["decimal_sep"])
-        tk.Label(nb, text="Separateur decimal :", font=("Segoe UI", 10)
-                 ).pack(anchor="w")
-        for val, lab in ((",", "Virgule  (1,5)"), (".", "Point  (1.5)")):
-            tk.Radiobutton(nb, text=lab, variable=sep_var, value=val,
-                command=lambda: s.update(decimal_sep=sep_var.get())
-                ).pack(anchor="w")
+        tk.Label(nb, text=self._t("decimal_sep"), font=("Segoe UI", 10)).pack(anchor="w")
+        for val, labkey in ((",", "comma"), (".", "dot")):
+            tk.Radiobutton(nb, text=self._t(labkey), variable=sep_var, value=val,
+                command=lambda: s.update(decimal_sep=sep_var.get())).pack(anchor="w")
         deg_var = tk.BooleanVar(value=bool(s["default_degrees"]))
-        tk.Checkbutton(nb, text="Demarrer en DEG (sinon RAD)",
-            variable=deg_var, font=("Segoe UI", 10),
-            command=lambda: s.update(default_degrees=deg_var.get())
-            ).pack(anchor="w", pady=4)
-        tk.Button(nb, text="REINITIALISER TOUT (comme au debut)",
-                  fg="#b00020", font=("Segoe UI", 10, "bold"),
+        tk.Checkbutton(nb, text=self._t("start_deg"), variable=deg_var, font=("Segoe UI", 10),
+            command=lambda: s.update(default_degrees=deg_var.get())).pack(anchor="w", pady=4)
+        tk.Button(nb, text=self._t("reset_all"), fg="#b00020", font=("Segoe UI", 10, "bold"),
                   command=lambda: self._reset_all(win)).pack(pady=12)
-        tk.Button(nb, text="Enregistrer et fermer",
-                  font=("Segoe UI", 10, "bold"),
-                  command=lambda: (s.update(theme_name=theme_var.get(),
-                    font_family=font_var.get()), self._apply_all(),
-                    win.destroy())).pack()
+        tk.Button(nb, text=self._t("save_close"), font=("Segoe UI", 10, "bold"),
+                  command=lambda: (s.update(theme_name=theme_var.get(), font_family=font_var.get()), self._apply_all(), win.destroy())).pack()
 
     def _reset_all(self, win=None):
-        if messagebox.askyesno("Reinitialiser",
-                               "Tout remettre comme au debut ?"):
+        if messagebox.askyesno(self._t("reset_title"), self._t("reset_msg")):
             self.settings = dict(DEFAULT_SETTINGS)
             self.degrees = True
             self.mode = "scientifique"
@@ -730,7 +830,7 @@ class Calculatrice(tk.Tk):
                "abs": abs, "pi": math.pi, "e": math.e}
         result = eval(s, {"__builtins__": {}}, env)  # noqa: S307
         if isinstance(result, complex):
-            raise ValueError("Resultat complexe")
+            raise ValueError("complex")
         return float(result)
 
     def _format(self, value):
@@ -802,7 +902,7 @@ class Calculatrice(tk.Tk):
             text = self._format(value)
         except Exception:
             self.expr_label.configure(text=shown)
-            self.display.configure(text="Erreur")
+            self.display.configure(text=self._t("error"))
             self.expression = ""
             self.just_evaluated = True
             self.last_op = None
@@ -841,7 +941,7 @@ class Calculatrice(tk.Tk):
             elif op == "abs":
                 v = abs(v)
         except Exception:
-            self.display.configure(text="Erreur")
+            self.display.configure(text=self._t("error"))
             self.expression = ""
             return
         self.expression = self._format(v)
@@ -857,7 +957,7 @@ class Calculatrice(tk.Tk):
                 raise ValueError
             v = float(math.factorial(int(v)))
         except Exception:
-            self.display.configure(text="Erreur")
+            self.display.configure(text=self._t("error"))
             self.expression = ""
             return
         self.expression = self._format(v)
