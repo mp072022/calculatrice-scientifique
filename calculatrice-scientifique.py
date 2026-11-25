@@ -56,6 +56,18 @@ LANGUES : anglais (par defaut), francais et espagnol.
 
 Bouton = repete : appuyer plusieurs fois sur = repete la derniere
     operation (+, -, x, /). Exemple : 9+9 = 18, = donne 27, = donne 36.
+
+CLAVIER :
+    - Touches "." et "," : inserent le separateur decimal choisi
+      dans les reglages (virgule ou point), pas toujours une virgule.
+    - Touche "=" du clavier et Entree du pave numerique (KP_Enter) :
+      declenchent le calcul, comme la touche Entree principale.
+    - Clavier AZERTY : les chiffres de la rangee du haut marchent
+      SANS Maj (&=1, e=2, "=3, '=4, (=5, e=7, _=8, c=9, a=0 par
+      keysym ; le 6 est reconnu par le keycode Windows VK_6=54,
+      distinct de la vraie touche moins VK_OEM_MINUS=189).
+    - Pave numerique : chiffres reconnus par keysym KP_0..KP_9 et,
+      sous Windows, par keycodes 96-105 si le caractere manque.
 """
 
 import json
@@ -1036,10 +1048,128 @@ class Calculatrice(tk.Tk):
             self.settings["saved_history"] = []
             save_settings(self.settings)
 
+    # Clavier AZERTY : chiffres de la rangee du haut sans Maj.
+    # Ces touches donnent & e " ' ( - e _ c a sans Maj ; on les
+    # reconnait par leur keysym (independant du caractere produit).
+    # Le 6 n'est pas dans ce tableau : son keysym "minus" est le
+    # meme que celui de la vraie touche moins, il est traite a
+    # part avec le keycode Windows (voir _on_key).
+    _AZERTY_KEYSYM_DIGITS = {
+        "ampersand": "1",
+        "eacute": "2",
+        "quotedbl": "3",
+        "apostrophe": "4",
+        "parenleft": "5",
+        "egrave": "7",
+        "underscore": "8",
+        "ccedilla": "9",
+        "agrave": "0",
+    }
+
     def _on_key(self, event):
-        ch = event.char
-        if ch.isdigit() or ch in ".,":
-            self._insert("," if ch in ".," else ch)
+        ch = getattr(event, "char", "") or ""
+        keysym = getattr(event, "keysym", "") or ""
+        keysym_low = keysym.lower()
+        try:
+            keycode = int(getattr(event, "keycode", 0) or 0)
+        except Exception:
+            keycode = 0
+        try:
+            state = int(getattr(event, "state", 0) or 0)
+        except Exception:
+            state = 0
+        is_windows = sys.platform.startswith("win")
+        sep = self.settings.get("decimal_sep", ",")
+
+        # Ctrl+M : basculer Normal/Scientifique
+        if keysym_low == "m" and state & 0x4:
+            self._toggle_mode()
+            return "break"
+
+        # Entree : touche principale ET Entree du pave numerique
+        if keysym in ("Return", "KP_Enter") or ch in ("\r", "\n"):
+            self._equals()
+            return "break"
+        if keysym == "Escape":
+            self._clear()
+            return "break"
+        if keysym == "BackSpace":
+            self._backspace()
+            return "break"
+
+        # --- AZERTY, le cas du 6 (Windows seulement) ---
+        # La touche physique 6 (VK_6 = 54) donne "-" sans Maj sur
+        # un clavier AZERTY, avec le keysym "minus". La vraie
+        # touche moins a le meme keysym mais le keycode
+        # VK_OEM_MINUS = 189 : le keycode permet de les distinguer.
+        # Hors Windows, on ne peut pas les distinguer, donc "-"
+        # reste l'operateur moins.
+        if is_windows and keysym == "minus" and keycode == 54:
+            self._insert("6")
+            return "break"
+        if is_windows and ch == "-" and keycode == 54:
+            self._insert("6")
+            return "break"
+
+        # --- Pave numerique : keycodes Windows VK_NUMPAD0..9 ---
+        # Filet de securite si event.char ne donne pas le chiffre
+        # (selon le pilote / l'etat de Verr. Num.).
+        if is_windows and 96 <= keycode <= 105 and not ch.isdigit():
+            # N'agir que pour un evenement du pave numerique, pas
+            # pour une autre touche partageant par hasard un code.
+            if keysym.startswith("KP_") or keysym in (
+                    "Num_Lock", "") or ch in ("", "\x00"):
+                self._insert(str(keycode - 96))
+                return "break"
+
+        # --- Pave numerique : keysyms KP_* ---
+        if keysym.startswith("KP_"):
+            suffix = keysym[3:]
+            if suffix.isdigit() and len(suffix) == 1:
+                self._insert(suffix)
+                return "break"
+            if suffix == "Decimal":
+                self._insert(sep)
+                return "break"
+            if suffix == "Add":
+                self._insert("+")
+                return "break"
+            if suffix == "Subtract":
+                self._insert("−")
+                return "break"
+            if suffix == "Multiply":
+                self._insert("×")
+                return "break"
+            if suffix == "Divide":
+                self._insert("÷")
+                return "break"
+
+        # --- AZERTY : chiffres de la rangee du haut, sans Maj ---
+        # A verifier AVANT le traitement par caractere : sinon
+        # "parenleft" insererait "(" au lieu du chiffre 5, etc.
+        if keysym in self._AZERTY_KEYSYM_DIGITS:
+            self._insert(self._AZERTY_KEYSYM_DIGITS[keysym])
+            return "break"
+
+        # --- Touche = du clavier ---
+        if ch == "=" or keysym == "equal":
+            # Sur AZERTY, Maj+= donne "+", deja traite par ch=="+"
+            # ci-dessous quand c'est le cas ; ici ch vaut "=".
+            if ch == "=":
+                self._equals()
+                return "break"
+
+        # --- Saisie normale, par caractere ---
+        if ch.isdigit():
+            self._insert(ch)
+        elif ch in (".", ","):
+            # (tuple, pas ".," : "" in ".," vaudrait vrai et une
+            # touche sans caractere insererait un separateur)
+            # Point comme virgule : inserer le separateur choisi
+            # dans les reglages, pas toujours une virgule en dur.
+            # Sur AZERTY, le point s'obtient par Maj+; et donnait
+            # donc toujours une virgule avant ce correctif.
+            self._insert(sep)
         elif ch == "+":
             self._insert("+")
         elif ch == "-":
@@ -1054,14 +1184,8 @@ class Calculatrice(tk.Tk):
             self._insert("(")
         elif ch == ")":
             self._insert(")")
-        elif ch in ("\r", "\n") or event.keysym == "Return":
-            self._equals()
-        elif event.keysym == "Escape":
-            self._clear()
-        elif event.keysym == "BackSpace":
-            self._backspace()
-        elif event.keysym.lower() == "m" and event.state & 0x4:
-            self._toggle_mode()  # Ctrl+M : basculer Normal/Scientifique
+        elif ch == "^" and self.mode == "scientifique":
+            self._insert("^")
         else:
             return
         return "break"
