@@ -1,34 +1,35 @@
-# Calculatrice scientifique
+# Scientific Calculator
 
-Calculatrice scientifique pour Windows, en Python (tkinter). Un seul fichier, rien à installer d'autre que Python.
+Scientific calculator for Windows, written in Python (tkinter). A single file, nothing else to install besides Python.
 
-[English version](README.en.md) · [Versión en español](README.es.md)
+[Version française](README.fr.md) · [Versión en español](README.es.md)
 
-## Lancer
+## Run it
 
-Double-cliquer sur `calculatrice-scientifique.py` (Python 3 requis, tkinter est inclus avec Python).
+Double-click `calculatrice-scientifique.py` (Python 3 required, tkinter comes with Python).
 
-## Ce qu'elle fait
+## What it does
 
-- Calculs de base, parenthèses, %, virgule décimale
-- Fonctions scientifiques : sin, cos, tan, log, ln, racine carrée, x², xʸ, 1/x, |x|, factorielle (n!), π et e
-- Bouton **2nd** pour les inverses (asin, acos, atan, e^x, 10^x)
-- **DEG/RAD** pour les angles
-- Mémoire : MC, MR, M+, M−, MS
-- Historique cliquable des calculs
-- Clavier complet : chiffres, + − * /, Entrée pour =, Échap pour effacer
+- Basic calculations, parentheses, %, decimal separator
+- Scientific functions: sin, cos, tan, log, ln, square root, x², xʸ, 1/x, |x|, factorial (n!), π and e
+- **2nd** button for inverse functions (asin, acos, atan, e^x, 10^x)
+- **DEG/RAD** for angles
+- Memory: MC, MR, M+, M−, MS
+- Clickable calculation history
+- Full keyboard support: digits, + − * /, Enter for =, Esc to clear
 
-## Modes et personnalisation
+## Modes and customization
 
-- **Mode Normal / Scientifique** : bouton en haut à gauche, ou Ctrl+M
-- **Personnaliser** : 8 thèmes prêts (Sombre, Clair, Bleu nuit, Vert forêt, Violet, Orange, Rose, Noir pur), couleurs libres, police, taille des chiffres et des boutons, taille de la fenêtre, transparence, nombre de décimales, virgule ou point, séparateur de milliers
-- Les réglages sont sauvegardés automatiquement dans `calculatrice_config.json`
+- **Normal / Scientific mode**: button at the top left, or Ctrl+M
+- **Customize**: 8 ready-made themes (Dark, Light, Midnight blue, Forest green, Purple, Orange, Pink, Pure black), free colors, font, digit and button sizes, window size, transparency, number of decimals, comma or dot separator, thousands separator
+- **Language**: English (default), Français, Español — in the Customize window
+- Settings are saved automatically in `calculatrice_config.json`
 
-## En faire un .exe
+## Build a .exe
 
 ```powershell
 pip install pyinstaller
 pyinstaller --onefile --windowed --name "Calculatrice-scientifique" calculatrice-scientifique.py
 ```
 
-Le fichier `.exe` se trouve ensuite dans le dossier `dist`.
+The `.exe` file is then in the `dist` folder.
