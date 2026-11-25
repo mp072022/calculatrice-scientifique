@@ -46,6 +46,9 @@ Fonctions de calcul (inchangees) :
     + - x / % parentheses, sin cos tan (+ inverses avec 2nd),
     log, ln, racine, x2, x^y, 1/x, |x|, factorielle, pi, e,
     DEG/RAD, memoire MC MR M+ M- MS, historique cliquable, clavier complet.
+
+Bouton = repete : appuyer plusieurs fois sur = repete la derniere
+    operation (+, -, x, /). Exemple : 9+9 = 18, = donne 27, = donne 36.
 """
 
 import json
@@ -155,6 +158,8 @@ class Calculatrice(tk.Tk):
         self.minsize(380, 440)
         self.expression = ""
         self.just_evaluated = False
+        self.last_op = None
+        self.last_operand = None
         self.degrees = bool(self.settings["default_degrees"])
         self.second = False
         self.memory = 0.0
@@ -659,6 +664,11 @@ class Calculatrice(tk.Tk):
             return
         if self.just_evaluated and text not in "+−×÷^%":
             self.expression = ""
+        # Toute nouvelle saisie annule la repetition du =
+        # (elle sera recalculee au prochain =)
+        if self.just_evaluated:
+            self.last_op = None
+            self.last_operand = None
         self.just_evaluated = False
         if (text in ("π", "e", "(") and self.expression
                 and (self.expression[-1].isdigit()
@@ -684,12 +694,16 @@ class Calculatrice(tk.Tk):
     def _clear(self):
         self.expression = ""
         self.just_evaluated = False
+        self.last_op = None
+        self.last_operand = None
         self.expr_label.configure(text="")
         self._refresh()
 
     def _backspace(self):
         self.expression = self.expression[:-1]
         self.just_evaluated = False
+        self.last_op = None
+        self.last_operand = None
         self._refresh()
 
     def _evaluate(self, expr):
@@ -737,10 +751,52 @@ class Calculatrice(tk.Tk):
             txt = sign + ip + grouped + (("." + parts[1]) if len(parts) > 1 else "")
         return txt.replace(".", sep) if sep == "," else txt
 
+    def _extract_last_operation(self, expr):
+        """Trouve la derniere operation binaire de haut niveau.
+
+        Retourne (operateur, operande_droite) ou None.
+        Ex. : '9+9' -> ('+', '9') ; '2+3×4' -> ('×', '4') ;
+        '(2+3)×4' -> ('×', '4') ; 'sin(30)' -> None.
+        Les operateurs entre parentheses sont ignores, et un
+        signe au debut ou apres '(' / un operateur est unaire.
+        """
+        depth = 0
+        last_idx = -1
+        last_char = None
+        for i, c in enumerate(expr):
+            if c == "(":
+                depth += 1
+            elif c == ")":
+                depth -= 1
+            elif depth == 0 and c in "+−×÷-*/":
+                if i > 0 and (expr[i - 1].isdigit()
+                              or expr[i - 1] in ")πe%,"):
+                    if i + 1 < len(expr):
+                        last_idx = i
+                        last_char = c
+        if last_idx < 0:
+            return None
+        operand = expr[last_idx + 1:].strip()
+        if not operand:
+            return None
+        return (last_char, operand)
+
     def _equals(self):
         if not self.expression:
             return
-        shown = self.expression
+        # Repetition : on vient d'appuyer sur = et on rappuie dessus
+        is_repeat = bool(self.just_evaluated
+                         and self.last_op is not None
+                         and self.last_operand is not None)
+        if self.just_evaluated and not is_repeat:
+            # = sur un simple resultat, sans operation a repeter :
+            # ne pas ajouter '18 = 18' en boucle dans l'historique.
+            return
+        if is_repeat:
+            shown = (f"{self.expression}{self.last_op}"
+                     f"{self.last_operand}")
+        else:
+            shown = self.expression
         try:
             value = self._evaluate(shown)
             text = self._format(value)
@@ -749,7 +805,16 @@ class Calculatrice(tk.Tk):
             self.display.configure(text="Erreur")
             self.expression = ""
             self.just_evaluated = True
+            self.last_op = None
+            self.last_operand = None
             return
+        if not is_repeat:
+            found = self._extract_last_operation(shown)
+            if found:
+                self.last_op, self.last_operand = found
+            else:
+                self.last_op = None
+                self.last_operand = None
         self.expr_label.configure(text=shown + " =")
         self.expression = text
         self.just_evaluated = True
@@ -781,6 +846,8 @@ class Calculatrice(tk.Tk):
             return
         self.expression = self._format(v)
         self.just_evaluated = True
+        self.last_op = None
+        self.last_operand = None
         self._refresh()
 
     def _factorial(self):
@@ -795,6 +862,8 @@ class Calculatrice(tk.Tk):
             return
         self.expression = self._format(v)
         self.just_evaluated = True
+        self.last_op = None
+        self.last_operand = None
         self._refresh()
 
     def _negate(self):
@@ -803,6 +872,8 @@ class Calculatrice(tk.Tk):
                 self.expression = self.expression[1:]
             else:
                 self.expression = "−" + self.expression
+            self.last_op = None
+            self.last_operand = None
             self._refresh()
 
     def _toggle_deg(self):
@@ -832,6 +903,8 @@ class Calculatrice(tk.Tk):
     def _mem_recall(self):
         self.expression = self._format(self.memory)
         self.just_evaluated = False
+        self.last_op = None
+        self.last_operand = None
         self._refresh()
 
     def _mem_add(self):
@@ -852,6 +925,8 @@ class Calculatrice(tk.Tk):
             return
         self.expression = self.hist_items[sel[0]].rsplit("=", 1)[-1].strip()
         self.just_evaluated = False
+        self.last_op = None
+        self.last_operand = None
         self._refresh()
 
     def _clear_history(self):
