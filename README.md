@@ -2,6 +2,8 @@
 
 Calculatrice scientifique pour Windows, en Python (tkinter). Un seul fichier, rien à installer d'autre que Python.
 
+[English version](README.en.md) · [Versión en español](README.es.md)
+
 ## Lancer
 
 Double-cliquer sur `calculatrice-scientifique.py` (Python 3 requis, tkinter est inclus avec Python).
