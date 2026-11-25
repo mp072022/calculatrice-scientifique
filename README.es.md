@@ -2,7 +2,7 @@
 
 Calculadora científica para Windows, en Python (tkinter). Un solo archivo, no hay que instalar nada más que Python.
 
-[Version française](README.md) · [English version](README.en.md)
+[Version française](README.fr.md) · [English version](README.md)
 
 ## Ejecutarla
 
@@ -22,6 +22,7 @@ Haz doble clic en `calculatrice-scientifique.py` (se necesita Python 3, tkinter 
 
 - **Modo Normal / Científico**: botón arriba a la izquierda, o Ctrl+M
 - **Personalizar**: 8 temas listos (Oscuro, Claro, Azul noche, Verde bosque, Violeta, Naranja, Rosa, Negro puro), colores libres, fuente, tamaño de los dígitos y de los botones, tamaño de la ventana, transparencia, número de decimales, coma o punto, separador de miles
+- **Idioma**: English (predeterminado), Français, Español — en la ventana Personalizar
 - Los ajustes se guardan automáticamente en `calculatrice_config.json`
 
 ## Crear un .exe
